@@ -1,0 +1,8 @@
+{
+  "name": "Tricolor Detector",
+  "description": "An AI-powered app that uses your camera to detect the Indian flag's tricolor pattern (saffron, white, and green) in any object or scene, not just flags.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "prompt": ""
+}
