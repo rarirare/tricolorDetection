@@ -26,7 +26,7 @@ const analyzeImageForTricolor = async (imageDataUrl: string): Promise<AnalysisRe
   };
 
   const textPart = {
-    text: `Analyze the image. Determine if it contains the colors of the Indian flag (saffron, white, and green) in a significant arrangement. It does not need to be a flag. Respond ONLY with a JSON object with the following structure: { "isTricolorPresent": boolean, "reason": string, "colorsFound": string[] }. The 'reason' should explain why you think the tricolor is present or not. 'colorsFound' should list the colors you detected corresponding to the Indian tricolor.`
+    text: `Analyze the image to detect the Indian tricolor flag pattern, which consists of three horizontal stripes in the exact sequence: saffron/orange at the top (RGB ~255,153,51), white in the middle (RGB 255,255,255), and green at the bottom (RGB ~19,136,8). The colors must appear as horizontal bands in this specific top-to-bottom order with approximately equal proportions in VERTICAL orientation only (reject any horizontal, diagonal, or other orientations), and can be present in actual flags, fabric, artwork, decorative items, or any object displaying this pattern, including partial views as long as the correct color sequence is maintained. Account for reasonable variations in color due to lighting, image quality, or printing differences. Respond ONLY with a JSON object: { "isTricolorPresent": boolean, "confidence": number, "reason": "detailed explanation of detection or absence", "colorsFound": ["array of detected tricolor colors using saffron/white/green"], "orientation": "vertical-correct/vertical-inverted/not-vertical" }`
   };
 
   const response = await ai.models.generateContent({
@@ -55,17 +55,11 @@ const analyzeImageForTricolor = async (imageDataUrl: string): Promise<AnalysisRe
 
 // --- UI Components ---
 
-const Header: React.FC = () => (
-  <header className="p-4 bg-gray-800/50 backdrop-blur-sm fixed top-0 left-0 right-0 z-10">
-    <h1 className="text-2xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-white to-green-500">
-      Tricolor Vision AI
-    </h1>
-  </header>
-);
+const Header: React.FC = () => null;
 
 const Footer: React.FC = () => (
-  <footer className="p-4 text-center text-xs text-gray-500 fixed bottom-0 left-0 right-0">
-    <p>Powered by Google Gemini</p>
+  <footer className="p-4 text-center text-xs fixed bottom-0 left-0 right-0" style={{ backgroundColor: 'white', color: 'rgb(46,36,97)' }}>
+    <p>The Minimalist ✖ Berger</p>
   </footer>
 );
 
@@ -84,12 +78,20 @@ const CameraView: React.FC<CameraViewProps> = ({ videoRef, onTakePicture, onCanc
       muted
       className="w-full h-full object-cover"
     />
-     <button onClick={onCancel} aria-label="Cancel" className="absolute top-5 right-5 text-white bg-black/50 rounded-full p-2 z-20 hover:bg-black/75 transition-colors">
+    <button onClick={onCancel} aria-label="Cancel" className="absolute top-5 right-5 text-white bg-black/50 rounded-full p-2 z-20 hover:bg-black/75 transition-colors">
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
-    <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/50 flex justify-center items-center gap-4">
+    <div
+      className="absolute left-0 right-0 flex justify-center items-center gap-4"
+      style={{
+        bottom: 0,
+        padding: '1rem',
+        paddingBottom: 'calc(2.5rem + 48px)', // 2.5rem (footer) + 48px (extra for mobile/desktop)
+        background: 'rgba(0,0,0,0.5)',
+      }}
+    >
       <button
         onClick={onTakePicture}
         className="w-16 h-16 bg-white rounded-full border-4 border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white transition-transform transform active:scale-95"
@@ -261,14 +263,15 @@ const App: React.FC = () => {
       case 'IDLE':
         return (
           <div className="flex flex-col items-center justify-center h-screen text-center p-4">
-             {error && <div className="bg-red-500/20 border border-red-500 text-red-300 p-4 rounded-lg mb-6 max-w-md">{error}</div>}
+            {error && <div className="bg-red-500/20 border border-red-500 text-red-300 p-4 rounded-lg mb-6 max-w-md">{error}</div>}
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Berger.png" alt="Logo" className="w-48 h-48 object-contain mb-10" style={{ background: 'white', borderRadius: 16 }} />
             <h2 className="text-4xl font-extrabold mb-4">Detect Indian Tricolor</h2>
             <p className="text-lg text-gray-400 mb-8 max-w-xl">
               Use your camera to find the saffron, white, and green color combination in any object or scene. It doesn't have to be a flag!
             </p>
             <button
               onClick={startCamera}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-indigo-500"
+              className="bg-white hover:bg-gray-200 text-[#2e2461] font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#2e2461] focus:ring-white shadow-lg"
             >
               Start Camera
             </button>
@@ -316,7 +319,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <main className="h-screen w-screen bg-gray-900 text-white font-sans overflow-auto">
+    <main className="h-screen w-screen font-sans overflow-auto" style={{ backgroundColor: 'rgb(46,36,97)', color: 'white' }}>
       <Header />
       <div className="h-full w-full">
         {renderContent()}
